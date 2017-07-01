@@ -1,0 +1,37 @@
+{
+  "name": "osmpostermaker",
+  "version": "0.1.0",
+  "description": "Make a poster from OSM tiles",
+  "homepage": "",
+  "license": "MIT",
+  "author": {
+    "name": "Jonathan Lurie",
+    "email": "lurie.jo@gmail.com",
+    "url": "http://me.jonathanlurie.fr"
+  },
+  "contributors": [],
+  "keywords": [],
+  "bugs": {
+    "url": "",
+    "email": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jonathanlurie/osmpostermaker"
+  },
+  "engines": {},
+  "dependencies": {
+    "gm": "^1.23.0",
+    "simple-imagemagick": "^0.2.2"
+  },
+  "peerDependencies": {},
+  "devDependencies": {},
+  "preferGlobal": false,
+  "main": "src/OsmPosterMaker.js",
+  "scripts": {
+    "test": "node test/test.js"
+  },
+  "files": [],
+  "bin": {},
+  "private": true
+}
