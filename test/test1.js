@@ -16,7 +16,7 @@ var zoom = 11;
 var mapBoxStyle = {
   username: "jonathanlurie",
   mapStyleID: "cj4g48asn0z5e2rn1alrdx14h",
-  token: "pk.eyJ1Ijoiam9uYXRoYW5sdXJpZSIsImEiOiJyQ0ZEVnZVIn0.1AhMgc1ZIGhsc_HCSSgL-w",
+  token: "pk.eyJ1Ijoiam9uYXRoYW5sdXJpZSIsImEiOiJjajRuandpdnAwMHpzMnd0Y3FwYXBlNTZ0In0.yZ21xWxBlESJVQib1wJDoA",
   tileSize: 1024
 }
 
