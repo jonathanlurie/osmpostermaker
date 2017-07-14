@@ -28,4 +28,25 @@ var pm = new OsmPosterMaker(
   mapBoxStyle
 )
 
+// defining some events
+
+pm.on( "tileDownloaded", function(index, total){
+  console.log("DL tile: " + index + "/" + total);
+})
+
+pm.on( "downloadDone", function(){
+  console.log("All tiles are downloaded");
+})
+
+pm.on( "stripWriten", function(index, total){
+  console.log("Strip written: " + index + "/" + total);
+})
+
+pm.on( "successMerge", function( path ){
+  console.log("Final image ready at: " + path);
+})
+
+
+
+
 pm.launch();

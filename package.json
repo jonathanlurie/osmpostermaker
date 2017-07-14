@@ -29,7 +29,7 @@
   "preferGlobal": false,
   "main": "src/OsmPosterMaker.js",
   "scripts": {
-    "test": "node test/test.js"
+    "test": "node test/test1.js"
   },
   "files": [],
   "bin": {},

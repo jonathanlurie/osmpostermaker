@@ -10,7 +10,18 @@ class TileDownloader {
     this._destFolder = null;
     this._tileDownloadCounter = 0;
     this._allLocalFiles = [];
-    this._onDownloadDone = null;
+
+    this._events = {
+      tileDownloaded: null,
+      downloadDone: null
+    }
+  }
+
+
+  on( eventName, cb ){
+    if( eventName in this._events ){
+      this._events[ eventName ] = cb;
+    }
   }
 
 
@@ -37,72 +48,6 @@ class TileDownloader {
   }
 
 
-  download(){
-    if( !this._tileFileList ){
-      console.error("The tile file list was not specified");
-      return;
-    }
-
-    if( !this._tileFileList.length ){
-      console.error("The tile file list is empty");
-      return;
-    }
-
-    if( !this._destFolder ){
-      console.error("The destination folder was not specified");
-      return;
-    }
-
-    this._allLocalFiles = [];
-    this._downloadTileFromIndex( 0 );
-
-  }
-
-
-  /**
-  * [PRIVATE]
-  * Download the tile
-  * @param {Number} i - tile index from the list
-  */
-  _downloadTileFromIndex( i ){
-    console.log("downloading " + (i+1) + "/" +  this._tileFileList.length );
-    var that = this;
-    var localFilePath = this._destFolder +
-                        "/" +
-                        this._tileFileList[i].xyz.x +
-                        "_" +
-                        this._tileFileList[i].xyz.y +
-                        "_" +
-                        this._tileFileList[i].xyz.z +
-                        ".png";
-
-    var distantFileUrl = this._tileFileList[i].url;
-
-    var localFile = fs.createWriteStream( localFilePath );
-    var request = https.get(distantFileUrl,
-      function(response) {
-      response.pipe( localFile );
-      that._allLocalFiles.push( localFilePath )
-
-      if( i < that._tileFileList.length - 1){
-        that._downloadTileFromIndex( ++i );
-      }else{
-        if( that._onDownloadDone ){
-          // wait until it's all written on disk
-          setTimeout(function() {
-            that._onDownloadDone( that._allLocalFiles );
-          }, 1000);
-
-        }
-      }
-    });
-  }
-
-  onDownloadDone( cb ){
-    this._onDownloadDone = cb;
-  }
-
-
   downloadSync(){
     if( !this._tileFileList ){
       console.error("The tile file list was not specified");
@@ -121,16 +66,23 @@ class TileDownloader {
 
     for(var i=0; i<this._tileFileList.length; i++){
       this._downloadTileFromIndexSync( i );
+
+
+      if( this._events.tileDownloaded ){
+        this._events.tileDownloaded(i+1 , this._tileFileList.length)
+      }
+
     }
 
-    this._onDownloadDone( null );
+    // calling the event when downlod is done
+    if( this._events.downloadDone ){
+      this._events.downloadDone()
+    }
 
   }
 
 
-
   _downloadTileFromIndexSync( i ){
-    console.log("downloading " + (i+1) + "/" +  this._tileFileList.length );
     var that = this;
     var localFilePath = this._destFolder +
                         "/" +
@@ -155,7 +107,6 @@ class TileDownloader {
 
     execSync(cmd);
   }
-
 
 
 } /* END of class TileDownloader */

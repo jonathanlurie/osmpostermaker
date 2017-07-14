@@ -9,15 +9,23 @@ class TileMerger {
     this._outputFilename = outputFilename;
     this._stripNames = [];
     this._nbStripsSuccesfullyWritten = 0;
+
+    this._events = {
+      stripWriten: null, // args: (index, total)
+      successMerge: null // args: ( path final image )
+    }
+  }
+
+
+  on( eventName, cb ){
+    if( eventName in this._events ){
+      this._events[ eventName ] = cb;
+    }
   }
 
 
   build(){
     var that = this;
-
-
-    //console.log( this._tileRange );
-
     var nbTileWidth = this._tileRange.x.max - this._tileRange.x.min + 1;
     var nbTileHeight = this._tileRange.y.max - this._tileRange.y.min + 1;
 
@@ -25,9 +33,7 @@ class TileMerger {
     this._stripNames.length = 0;
     this._nbStripsSuccesfullyWritten = 0;
 
-
     for(var y=this._tileRange.y.min; y<=this._tileRange.y.max; y++){
-
       var currentStripGm = gm();
 
       for(var x=this._tileRange.x.min; x<=this._tileRange.x.max; x++){
@@ -52,18 +58,21 @@ class TileMerger {
           if( err ){
             console.error( err );
           }else{
-            console.log("success strip: " + that._nbStripsSuccesfullyWritten);
+            //console.log("success strip: " + that._nbStripsSuccesfullyWritten);
             that._nbStripsSuccesfullyWritten++;
 
+            if( that._events.stripWriten ){
+              that._events.stripWriten( that._nbStripsSuccesfullyWritten, nbTileHeight )
+            }
+
             if( nbTileHeight == that._nbStripsSuccesfullyWritten){
-              console.log( "wrote all stripes!" );
+              //console.log( "wrote all stripes!" );
               that._mergeStrips();
             }
 
           }
         }
       );
-
     }
 
   } // end build
@@ -73,9 +82,7 @@ class TileMerger {
     var that = this;
     var allStrips = gm();
 
-    //for(var i=0; i<this._stripNames.length; i++){
-      allStrips.append(this._stripNames, false)
-    //}
+    allStrips.append(this._stripNames, false)
 
     allStrips.write(
       this._outputFilename,
@@ -83,11 +90,13 @@ class TileMerger {
         if( err ){
           console.error( err );
         }else{
-          console.log("final image at: " + that._outputFilename);
+          if( that._events.successMerge ){
+            that._events.successMerge( that._outputFilename )
+          }
+
         }
       }
     );
-
   }
 
 }
